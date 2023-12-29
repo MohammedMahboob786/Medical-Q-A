@@ -44,7 +44,7 @@ def load_llm():
     llm = CTransformers(
         model = "llama-2-7b-chat.ggmlv3.q4_0.bin",
         model_type="llama",
-        max_new_tokens = 512,
+        max_new_tokens = 600,
         temperature = 0.5
     )
     return llm
@@ -64,7 +64,7 @@ def qa_bot():
 def final_result(query):
     qa_result = qa_bot()
     response = qa_result({'query': query})
-    return response
+    return print(response)
 
 #chainlit code
 @cl.on_chat_start
@@ -86,12 +86,14 @@ async def main(message: cl.Message):
     )
     cb.answer_reached = True
     res = await chain.acall(message.content, callbacks=[cb])
-    answer = res["result"]
+    # answer = res["result"]
     sources = res["source_documents"]
 
     if sources:
-        answer += f"\nSources:" + str(sources)
+        pass
+        # answer += f"\nSources:" + str(sources)
     else:
-        answer += "\nNo sources found"
+        answer = "\nNo sources found"
+        await cl.Message(content=answer).send()
 
-    await cl.Message(content=answer).send()
+
